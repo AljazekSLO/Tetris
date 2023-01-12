@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
+import { Link } from 'react-router-dom';
 
 import Stars from '../components/Stars'
+import Timer from '../components/Timer';
 
 const Game = () => {    
 
@@ -8,12 +10,59 @@ const Game = () => {
 
   const [startGame, setStartGame] = useState(false);
   const [lostScreen, setLostScreen] = useState(false);
+  const [timer, setTimer] = useState(3);
+
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(localStorage.getItem('highscore'));
+  let scores = JSON.parse(localStorage.getItem('scores')) || [];
+
+  const [keyCode, setKeyCode] = useState({
+    rotate: 81,
+    down: 40,
+    left: 37,
+    right: 39
+  });
+  
 
   useEffect(() => {
+      const keyCodes = JSON.parse(localStorage.getItem('keys'));
+      setKeyCode(keyCodes);
       playerReset();
       updateScore();
       update();
   }, []);
+
+  useEffect(() => {
+    if(timer === 0) {
+      setStartGame(true);
+    }
+  }, [timer]);
+
+  useEffect(() => {
+
+    playerReset();
+    updateScore();
+    update();
+  }, [startGame]);
+
+
+  useEffect(() => {
+    const audio = document.getElementById('gameover')
+    if (lostScreen) {
+      audio.play();
+    }
+  }, [lostScreen]);
+
+  useEffect(() => {
+    if(highScore < score) {
+      setHighScore(score)
+      localStorage.setItem('highscore', score);
+    }
+    if(lostScreen) {
+      scores.push(score);
+      localStorage.setItem('scores', JSON.stringify(scores));
+    }
+  }, [lostScreen]);
 
 
   function arenaSweep() {
@@ -30,6 +79,8 @@ const Game = () => {
         ++y;
 
         player.score += rowCount * 10;
+        setScore(player.score);
+        
         rowCount *= 2;
 
         updateScore();
@@ -129,11 +180,11 @@ function collide(arena, player) {
     
     ctx.scale(20, 20);
     drawMatrix(arena, {x: 0, y: 0});
-    drawMatrix(player.matrix, player.pos);
+    if(startGame) drawMatrix(player.matrix, player.pos);
   }
   
   function playerDrop() {
-    player.pos.y++;
+    if(startGame) player.pos.y++;
     if(collide(arena, player)) {
       player.pos.y--;
       merge(arena, player);
@@ -160,6 +211,7 @@ function collide(arena, player) {
         arena.forEach(row => row.fill(0));
         player.score = 0;
         updateScore();
+        setLostScreen(true)
     }
 }
 
@@ -229,10 +281,9 @@ function collide(arena, player) {
   }
 
   const arena = createMatrix(12, 20);
-  console.log(arena); 
 
   const updateScore = () => {
-    if(document.getElementById('score') !== null) document.getElementById('score').innerText = player.score;
+    if(document.getElementById('score') !== null) document.getElementById('score').innerText = 'Current Score: ' + player.score;
   }
 
   const colors = [
@@ -253,17 +304,15 @@ function collide(arena, player) {
   }
 
   document.addEventListener('keydown', event => {
-    if (event.keyCode === 37) {
+    if (event.keyCode === keyCode.left) {
         playerMove(-1);
-    } else if (event.keyCode === 39) {
+    } else if (event.keyCode === keyCode.right) {
         playerMove(1);
-    } else if (event.keyCode === 40) {
+    } else if (event.keyCode === keyCode.down) {
         playerDrop();
-    } else if (event.keyCode === 81) {
+    } else if (event.keyCode === keyCode.rotate) {
         playerRotate(-1);
-    } else if (event.keyCode === 87) {
-        playerRotate(1);
-    }
+    } 
 });
 
   return (
@@ -271,24 +320,32 @@ function collide(arena, player) {
         <Stars />
         {!lostScreen ? 
         <div className="flex justify-center flex-col items-center h-[100vh] relative z-20">
-        {!startGame ? <h1 className='text-white text-2xl animate-bounce my-2'>Press <span onClick={() => setStartGame(true)} className='bg-white text-black px-2 rounded-lg hover:cursor-pointer'>Start</span> To Play Tetris</h1> 
-        :
+        {startGame ? 
           <div>
             <div className='text-3xl text-white font-bold my-2' id='score'></div>
           </div>
-        }
-          <canvas className='border-2 border-white h-[70vh] relative z-20' id='canvas' />
+          : 
           <div>
-            <button className='bg-white text-black px-3 py-2 rounded-lg my-2 text-2xl uppercase font-bold' onClick={() => setStartGame(true)}>Start Game</button>
+            <Timer timer={timer} setTimer={setTimer} />
+          </div>
+        }
+          <div className='flex flex-col'>
+            <canvas className='border-2 border-white h-[70vh] relative z-20' id='canvas' />
+            <button className='bg-white text-black px-3 py-2 rounded-lg my-2 text-2xl uppercase font-bold' onClick={() => setLostScreen(true)}>End Game</button>
             
           </div>
         </div> : 
-        <div className='flex justify-center items-center w-full h-[100vh] relative z-20'>
+        <div className='flex justify-center items-center flex-col w-full h-[100vh] relative z-20 bg-black'>
           <canvas className='hidden' id='canvas' />
-          <div className='bg-white p-5'>
+          <h1 className='text-[#d60303] font-bold uppercase text-[5rem] text-center my-2 animate-pulse mb-5'>YOU LOSE!</h1>
+          <h1 className='text-white font-bold text-4xl mb-5'>Score: <span className='bg-white p-2 text-black rounded-md'>{score}</span></h1>
+          <h1 className='text-white font-bold text-4xl mb-5'>All Time Highscore: <span className='bg-white p-2 text-black rounded-md'>{highScore}</span></h1>
+          <Link className='absolute bottom-5 bg-white text-black px-3 py-2 rounded-lg my-2 text-2xl uppercase font-bold' to='/'>Back to Main Menu</Link>
+          <audio id='gameover' src='/gameover.mp3'></audio>
+          {/* <div className='bg-white p-5'>
             <h1 className='text-[#d60303] font-bold uppercase text-2xl text-center my-2'>You Lost</h1>
-            <h1 className='text-black text-2xl my-2'>Your Score Was: {player.score}</h1>
-          </div>
+            <h1 className='text-black text-2xl my-2'>Your Score Was: {score}</h1>
+          </div> */}
         </div>}
       </div>
 

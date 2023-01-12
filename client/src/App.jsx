@@ -5,9 +5,11 @@ import Settings from './pages/Settings'
 import Lobby from './pages/Lobby'
 import Game from './pages/Game'
 
+
 import { MdMusicNote,  MdMusicOff } from 'react-icons/md'
 
 function App() {
+
 
   const [playing, setPlaying] = useState(false)
 
