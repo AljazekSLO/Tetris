@@ -102,8 +102,8 @@ function recycleStar(star) {
 function resize() {
   scale = window.devicePixelRatio || 1;
 
-  width = window.innerWidth * scale;
-  height = window.innerHeight * scale;
+  width = window.innerWidth;
+  height = window.innerHeight;
 
   canvas.width = width;
   canvas.height = height;
@@ -171,32 +171,7 @@ function render() {
   });
 }
 
-function movePointer(x, y) {
-  if (typeof pointerX === "number" && typeof pointerY === "number") {
-    let ox = x - pointerX,
-      oy = y - pointerY;
 
-    velocity.tx = velocity.tx + (ox / 8) * scale * (touchInput ? 1 : -1);
-    velocity.ty = velocity.ty + (oy / 8) * scale * (touchInput ? 1 : -1);
-  }
-
-  pointerX = x;
-  pointerY = y;
-}
-
-function onMouseMove(event) {
-  touchInput = false;
-
-  movePointer(event.clientX, event.clientY);
-}
-
-function onTouchMove(event) {
-  touchInput = true;
-
-  movePointer(event.touches[0].clientX, event.touches[0].clientY, true);
-
-  event.preventDefault();
-}
 
 function onMouseLeave() {
   pointerX = null;

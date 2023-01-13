@@ -11,11 +11,23 @@ const SettingsMenu = ({playing, setPlaying}) => {
 
   
   useEffect(() => {
+    
     const keyCodes = JSON.parse(localStorage.getItem('keys'));  
     console.log(keyCodes);
 
+
+    const directions = ['rotate', 'down', 'left', 'right'];
+    directions.forEach((direction) => {
+      const input = document.querySelector(`input[name=${direction}]`);
+      input.value = keyCodes[direction].key;
+    });
+    
+
     const volume = document.getElementById('volume')
-    volume.value = localStorage.getItem('volume') * 100;
+    const valueStatus = localStorage.getItem('volume') * 100;
+    if(valueStatus == 0 || null) volume.value = 100;
+    else volume.value = valueStatus;
+
     
   }, [])
 
@@ -28,13 +40,13 @@ const SettingsMenu = ({playing, setPlaying}) => {
       const key = input.value;
       const keyCode = key.length === 1 ? key.charCodeAt(0) : getKeyCodeFromChar(key);
       if (keyCode >= 41 && keyCode <= 122) {
-        keys[direction] = keyCode - 32;
+        keys[direction] = { key: key, keyCode: keyCode - 32};
       } else {
-        keys[direction] = keyCode;
+        keys[direction] = { key: key, keyCode: keyCode};
       }
     });
     const values = Object.values(keys);
-    const keysInRange = values.every((value) => value >= 37 && value <= 122);
+    const keysInRange = values.every((value) => value.keyCode >= 37 && value.keyCode <= 122);
     if (!keysInRange) {
       console.log('Keys must be in range a-z');
       return;
@@ -89,7 +101,7 @@ const SettingsMenu = ({playing, setPlaying}) => {
                             type="button"
                             name="left"
                             className="text-white hover:cursor-pointer"
-                            defaultValue="ArrowLeft"
+                            value="ArrowLeft"
                             onClick={() => handleClick('left')}
                           />
                         </td>
@@ -101,7 +113,7 @@ const SettingsMenu = ({playing, setPlaying}) => {
                             type="button"
                             name="right"
                             className="text-white hover:cursor-pointer"
-                            defaultValue="ArrowRight"
+                            value="ArrowRight"
                             onClick={() => handleClick('right')}
                           />
                         </td>
@@ -113,7 +125,7 @@ const SettingsMenu = ({playing, setPlaying}) => {
                             type="button"
                             name="down"
                             className="text-white hover:cursor-pointer"
-                            defaultValue="ArrowDown"
+                            value="ArrowDown"
                             onClick={() => handleClick('down')}
                           />
                         </td>
@@ -125,7 +137,7 @@ const SettingsMenu = ({playing, setPlaying}) => {
                             type="button"
                             name="rotate"
                             className="text-white hover:cursor-pointer"
-                            defaultValue="Q"
+                            value="Q"
                             onClick={() => handleClick('rotate')}
                           />
                         </td>

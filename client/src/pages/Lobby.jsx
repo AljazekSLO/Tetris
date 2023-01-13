@@ -1,6 +1,11 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 
+import { Link } from 'react-router-dom'
+
+import Stars from '../components/Stars'
+import HistoryMenu from '../components/HistoryMenu'
+
 const Lobby = () => {
 
   const [scores, setScores] = useState([])
@@ -10,15 +15,13 @@ const Lobby = () => {
   }, [])
   
   return (
-    <div>
-      <div className='flex justify-center flex-col items-center w-full h-[100vh]'>
-        <h1 className='text-white text-4xl font-bold'>History of Games:</h1>
-          {scores && scores.map((score, index) => (
-            <h1>{score}</h1>
-          ))}
+    <div className='h-[100vh]'>
+      <Stars />
+      <div className='h-full flex justify-center items-center relative z-20'>
+          <HistoryMenu/>
       </div>
     </div>
-  )
+  ) 
 }
 
 export default Lobby

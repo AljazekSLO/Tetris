@@ -16,17 +16,10 @@ const Game = () => {
   const [highScore, setHighScore] = useState(localStorage.getItem('highscore'));
   let scores = JSON.parse(localStorage.getItem('scores')) || [];
 
-  const [keyCode, setKeyCode] = useState({
-    rotate: 81,
-    down: 40,
-    left: 37,
-    right: 39
-  });
+  const [key, setKey] = useState(JSON.parse(localStorage.getItem('keys')));
   
 
   useEffect(() => {
-      const keyCodes = JSON.parse(localStorage.getItem('keys'));
-      setKeyCode(keyCodes);
       playerReset();
       updateScore();
       update();
@@ -54,13 +47,16 @@ const Game = () => {
   }, [lostScreen]);
 
   useEffect(() => {
+    if(highScore == null) setHighScore(score);
     if(highScore < score) {
       setHighScore(score)
       localStorage.setItem('highscore', score);
     }
     if(lostScreen) {
-      scores.push(score);
-      localStorage.setItem('scores', JSON.stringify(scores));
+      if(score !== 0) {
+        scores.unshift(score);
+        localStorage.setItem('scores', JSON.stringify(scores));
+      }
     }
   }, [lostScreen]);
 
@@ -90,14 +86,15 @@ const Game = () => {
 function collide(arena, player) {
   const m = player.matrix;
   const o = player.pos;
-  for (let y = 0; y < m.length; ++y) {
-      for (let x = 0; x < m[y].length; ++x) {
-          if (m[y][x] !== 0 &&
-             (arena[y + o.y] &&
-              arena[y + o.y][x + o.x]) !== 0) {
-              return true;
-          }
-      }
+  if(m === null) return false;
+    for (let y = 0; y < m.length; ++y) {
+        for (let x = 0; x < m[y].length; ++x) {
+            if (m[y][x] !== 0 &&
+               (arena[y + o.y] &&
+                arena[y + o.y][x + o.x]) !== 0) {
+                return true;
+            }
+        }
   }
   return false;
 }
@@ -184,7 +181,7 @@ function collide(arena, player) {
   }
   
   function playerDrop() {
-    if(startGame) player.pos.y++;
+    if(startGame)player.pos.y++;
     if(collide(arena, player)) {
       player.pos.y--;
       merge(arena, player);
@@ -242,6 +239,7 @@ function collide(arena, player) {
   }
 
   const rotate = (matrix, dir) => {
+    if(matrix == null) return false;
     for(let y = 0; y < matrix.length; ++y) {
       for(let x = 0; x < y; ++x) {
         [
@@ -304,13 +302,13 @@ function collide(arena, player) {
   }
 
   document.addEventListener('keydown', event => {
-    if (event.keyCode === keyCode.left) {
+    if (event.keyCode === key.left.keyCode) {
         playerMove(-1);
-    } else if (event.keyCode === keyCode.right) {
+    } else if (event.keyCode === key.right.keyCode) {
         playerMove(1);
-    } else if (event.keyCode === keyCode.down) {
+    } else if (event.keyCode === key.down.keyCode) {
         playerDrop();
-    } else if (event.keyCode === keyCode.rotate) {
+    } else if (event.keyCode === key.rotate.keyCode) {
         playerRotate(-1);
     } 
 });
