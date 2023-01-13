@@ -1,12 +1,11 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 
-import { Link } from 'react-router-dom'
 
 import Stars from '../components/Stars'
 import HistoryMenu from '../components/HistoryMenu'
 
-const Lobby = () => {
+const History = () => {
 
   const [scores, setScores] = useState([])
 
@@ -24,4 +23,4 @@ const Lobby = () => {
   ) 
 }
 
-export default Lobby
+export default History

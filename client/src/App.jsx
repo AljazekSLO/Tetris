@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
-import Lobby from './pages/Lobby'
+import History from './pages/History'
 import Game from './pages/Game'
 
 
@@ -42,7 +42,7 @@ function App() {
           <Route exact path="/home" element={<Home/>} />
           <Route exact path="/game" element={<Game/>} />
           <Route exact path="/settings" element={<Settings playing={playing} setPlaying={setPlaying}/>} />
-          <Route exact path="/lobby" element={<Lobby />} />
+          <Route exact path="/history" element={<History />} />
         </Routes>
       </BrowserRouter>
     </div>

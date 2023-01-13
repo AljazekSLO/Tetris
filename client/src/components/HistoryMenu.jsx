@@ -29,7 +29,7 @@ const HistoryMenu = () => {
                             <td className='text-3xl text-white'>{score} Points</td>
                         </tr>
                     )) : 
-                        <tr><td className='text-3xl text-white font-bold p-5'>No Games yet.</td></tr>
+                        <tr><td className='text-3xl text-white font-bold p-5'>No Valid Games Yet.</td></tr>
                     } 
                   </tbody>
                 </table>

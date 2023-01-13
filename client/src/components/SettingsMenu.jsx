@@ -4,16 +4,26 @@ import { Link } from 'react-router-dom'
 
 import { IoMdArrowRoundBack } from 'react-icons/io'
 
-import {getCharFromKeyCode, getKeyCodeFromChar} from '../utils/index'
+import { getKeyCodeFromChar} from '../utils/index'
 
 const SettingsMenu = ({playing, setPlaying}) => {
 
-
   
   useEffect(() => {
+
+    let keyCodes;
     
-    const keyCodes = JSON.parse(localStorage.getItem('keys'));  
-    console.log(keyCodes);
+    if(localStorage.getItem('keys') != null) {
+      keyCodes = JSON.parse(localStorage.getItem('keys'));  
+    }
+    else {
+      keyCodes = {
+        rotate: { key: 'Q', keyCode: 113 },
+        down: { key: 'ArrowDown', keyCode: 40 },
+        left: { key: 'ArrowLeft', keyCode: 37 },
+        right: { key: 'ArrowRight', keyCode: 39 },
+      };
+    }
 
 
     const directions = ['rotate', 'down', 'left', 'right'];
@@ -80,7 +90,7 @@ const SettingsMenu = ({playing, setPlaying}) => {
               <Link to='/'><IoMdArrowRoundBack className='mr-[1rem]'/></Link>
               <h1>Settings</h1>
             </div>
-            <div className='bg-[#3da5d9] rounded-b-md flex items-start justify-center min-h-[600px]'>
+            <div className='bg-[#3da5d9] rounded-b-md flex items-start justify-center min-h-[600px] relative'>
                 <table>
                   <tbody>
                     <tr>
@@ -141,12 +151,10 @@ const SettingsMenu = ({playing, setPlaying}) => {
                             onClick={() => handleClick('rotate')}
                           />
                         </td>
-                        <td>
-                            <button onClick={handleChangeKeys}>Save</button>
-                        </td>
                     </tr>
                   </tbody>
                 </table>
+               <button className='absolute bottom-0 right-0 m-5 px-2 py-1 bg-white rounded' onClick={handleChangeKeys}>Save Keys</button>
             </div>
         </div>
   )
