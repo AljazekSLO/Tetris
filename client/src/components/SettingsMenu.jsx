@@ -44,6 +44,7 @@ const SettingsMenu = ({playing, setPlaying}) => {
   const handleChangeKeys = (e) => {
     e.preventDefault();
     const directions = ['rotate', 'down', 'left', 'right'];
+    const save = document.getElementById('save');
     const keys = {};
     directions.forEach((direction) => {
       const input = document.querySelector(`input[name=${direction}]`);
@@ -62,7 +63,8 @@ const SettingsMenu = ({playing, setPlaying}) => {
       return;
     }
     localStorage.setItem('keys', JSON.stringify(keys));
-    console.log('Keys changed successfully');
+    save.innerHTML = 'Saved!';
+    
   };
   
   
@@ -147,14 +149,14 @@ const SettingsMenu = ({playing, setPlaying}) => {
                             type="button"
                             name="rotate"
                             className="text-white hover:cursor-pointer"
-                            value="Q"
+                            value="q"
                             onClick={() => handleClick('rotate')}
                           />
                         </td>
                     </tr>
                   </tbody>
                 </table>
-               <button className='absolute bottom-0 right-0 m-5 px-2 py-1 bg-white rounded' onClick={handleChangeKeys}>Save Keys</button>
+               <button id='save' className='absolute bottom-0 right-0 m-5 px-2 py-1 bg-white rounded' onClick={handleChangeKeys}>Save Keys</button>
             </div>
         </div>
   )
