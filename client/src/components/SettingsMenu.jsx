@@ -18,7 +18,7 @@ const SettingsMenu = ({playing, setPlaying}) => {
     }
     else {
       keyCodes = {
-        rotate: { key: 'Q', keyCode: 113 },
+        rotate: { key: 'q', keyCode: 81 },
         down: { key: 'ArrowDown', keyCode: 40 },
         left: { key: 'ArrowLeft', keyCode: 37 },
         right: { key: 'ArrowRight', keyCode: 39 },

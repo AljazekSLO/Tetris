@@ -26,6 +26,17 @@ const Game = () => {
   }, []);
 
   useEffect(() => {
+    if(key == null) {
+      setKey({
+        rotate: { key: 'q', keyCode: 81 },
+        down: { key: 'ArrowDown', keyCode: 40 },
+        left: { key: 'ArrowLeft', keyCode: 37 },
+        right: { key: 'ArrowRight', keyCode: 39 },
+      });
+    }
+  }, [key]);
+
+  useEffect(() => {
     if(timer === 0) {
       setStartGame(true);
     }
